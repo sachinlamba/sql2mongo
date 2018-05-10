@@ -37,7 +37,11 @@ router.route('/connect2MongoDB')
         url = req.body.url,
         port = req.body.port,
         collection = req.body.collection;
-    var db = mongoose.connect("mongodb://" + user + ":" + password + "@" + url + ":" + port + "/" + collection, function(error){
+    let connectURL = "mongodb://"  + url + ":" + port + "/" + collection
+    if(user && password){
+      connectURL = "mongodb://" + user + ":" + password + "@" + url + ":" + port + "/" + collection
+    }
+    var db = mongoose.connect(connectURL, function(error){
       if (error){
         res.send(error);
       }
