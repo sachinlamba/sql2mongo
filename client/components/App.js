@@ -74,7 +74,7 @@ class App extends Component {
       ).then(function(response) {
         console.log("return", response);
         _this.setState({
-          messageFromMySQLServer: response.data.message ? response.data.message : "Error while connection with MySQL.",
+          messageFromMySQLServer: (response.data.message || response.data.code) ? (response.data.message || response.data.code) : "Error while connection with MySQL.",
           connect: response.data.result,
           mysqlConnectTry: false
         });
