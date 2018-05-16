@@ -15,11 +15,11 @@ class App extends Component {
         collection : "ppsample"
       },
       mysqldb: {
-        user : "productssql",
+        user : "root",
         password : "lamba@",
-        host : "den1.mssql6.gear.host",
+        host : "localhost",
         port : 3306,
-        database : "productssql"
+        database : "products"
       },
       messageFromMongoServer : "",
       messageFromMySQLServer : "",
@@ -51,6 +51,32 @@ class App extends Component {
           messageFromMongoServer: response.data.message ? response.data.message : "Error while connection with MongoDB.",
           connect: response.data.result,
           mongoConnectTry: false
+        });
+      });
+  }
+  fetchMySQLMetadata() {
+    let _this = this;
+    _this.setState({
+      mysqlConnectTry: true
+    });
+      axios.post('/fetchMySQLMetadata',{
+          user: this.state.mysqldb.user,
+          password: this.state.mysqldb.password,
+          host: this.state.mysqldb.host,
+          port: this.state.mysqldb.port,
+          database: this.state.mysqldb.database
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      ).then(function(response) {
+        console.log("metadata return value ", response);
+        _this.setState({
+          messageFromMySQLServer: (response.data.message || response.data.code) ? (response.data.message || response.data.code) : "Error while connection with MySQL.",
+          // connect: response.data.result,
+          mysqlConnectTry: false
         });
       });
   }
@@ -180,6 +206,7 @@ class App extends Component {
                       value={this.state.mysqldb.database} onChange={evt => this.updateMySQLConnection(evt, "database")}/>
                 </div>
                 <div type="button" class="btn btn-primary" onClick={this.connectMySQL.bind(this)}>Connect</div>
+                <div type="button" class="btn btn-secondary" onClick={this.fetchMySQLMetadata.bind(this)}>Metadata</div>
                 {
                   this.state.mysqlConnectTry ?
                   <div className="loadersmall"></div>
