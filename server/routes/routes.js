@@ -3,7 +3,7 @@ var router = express.Router();
 var mongoose   = require('mongoose');
 var mysql = require('mysql');
 
-var metadata = require('jdbc-metadata');
+// var metadata = require('jdbc-metadata');
 
 router.get('/', function(req, res){
 
