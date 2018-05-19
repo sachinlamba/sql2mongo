@@ -5,6 +5,12 @@ var mysql = require('mysql');
 
 var metadata = require('jdbc-metadata');
 
+var JDBC = require('jdbc');
+var jinst = require('jdbc/lib/jinst');
+var Pool = require('jdbc/lib/pool');
+var path = require("path");
+
+
 router.get('/', function(req, res){
 
   // var db = mongoose.connect('mongodb://sachin:lamba@ds253587.mlab.com:53587/ppsample', function(error){
@@ -86,16 +92,28 @@ router.route('/fetchMySQLMetadata')
         host = req.body.host,
         port = req.body.port,
         database = req.body.database;
+
+        if (!jinst.isJvmCreated()) {
+          // Add all java options required by your project here.  You get one chance to
+          // setup the options before the first java call.
+          jinst.addOption("-Xrs");
+          // Add all jar files required by your project here.  You get one chance to
+          // setup the classpath before the first java call.
+          // jinst.setupClasspath(['./jars/mysql-connector-java-5.1.38-bin.jar']);
+          jinst.setupClasspath(['./jar/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar']);
+      }
+      console.log(". = %s", path.resolve("."));
+      console.log("__dirname = %s", path.resolve(__dirname));
+      // var jdbcConfig = {
+      //     libpath: __dirname + '/../jar/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46.jar',
+      //     drivername: 'com.mysql.jdbc.Driver',
+      //     url: host,
+      //     user: user,
+      //     password: password,
+      //     database: database
+      // };
       var jdbcConfig = {
-          libpath: __dirname + '/../jar/mysql-connector-java-5.1.46.jar',
-          drivername: 'com.mysql.jdbc.Driver',
-          url: host,
-          user: user,
-          password: password,
-          database: database
-      };
-      var jdbcConfig = {
-          libpath: '../../jar/mysql-connector-java-5.1.46-bin.jar',
+          libpath: './jar/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar',
           drivername: 'com.mysql.jdbc.Driver',
           url: 'jdbc:mysql://localhost:3306/sakila',
           user: 'root',
@@ -112,28 +130,28 @@ router.route('/fetchMySQLMetadata')
           console.log('Getting tables...',metadata);
           var options = {schema: 'test', types: ['TABLE', 'VIEW']};
 
-          console.log("ewrterte");
-          jdbcMetadata.primaryKeys({}, function (err, primaryKeys) {
-              console.log("jh  -> ",primaryKeys);
-              res.send(primaryKeys);
-          });
-
-          // jdbcMetadata.tables(options, function (err, tables) {
-          //   console.log("Sdfdfsdfdfvsfs");
-          //   // if (err){
-          //   //   console.log('Error tables fetching...');
-          //   //   res.send(err);
-          //   // }
-          //     console.log("tables: ", tables);
-          //     res.send(tables);
-          //     jdbcConn.close(function(err) {
-          //       console.log('Error closing connection...');
-          //       if (err){
-          //         res.send(err);
-          //       }
-          //       console.log('Connection closed');
-          //     });
+          // console.log("ewrterte");
+          // jdbcMetadata.primaryKeys({}, function (err, primaryKeys) {
+          //     console.log("jh  -> ",primaryKeys);
+          //     res.send(primaryKeys);
           // });
+
+          jdbcMetadata.tables(options, function (err, tables) {
+            console.log("Sdfdfsdfdfvsfs");
+            // if (err){
+            //   console.log('Error tables fetching...');
+            //   res.send(err);
+            // }
+              console.log("tables: ", tables);
+              res.send(tables);
+              // jdbcConn.close(function(err) {
+              //   console.log('Error closing connection...');
+              //   if (err){
+              //     res.send(err);
+              //   }
+              //   console.log('Connection closed');
+              // });
+          });
       });
   })
 
