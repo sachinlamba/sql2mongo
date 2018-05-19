@@ -5,76 +5,6 @@ var mysql = require('mysql');
 var metadata = require('jdbc-metadata');
 
 router.get('/', function(req, res){
-
-  // var db = mongoose.connect('mongodb://sachin:lamba@ds253587.mlab.com:53587/ppsample', function(error){
-  //     if(error) console.log(error);
-  //     console.log("connection successful with mongodb");
-  // });
-  //
-  // var connection = mysql.createConnection({
-  //   host     : 'den1.mssql6.gear.host',
-  //   user     : 'productssql',
-  //   password : 'lamba@',
-  //   database : 'productssql'
-  // });
-  //
-  // connection.connect();
-  //
-  // connection.query('SELECT 1 + 1 AS solution', function (err, rows, fields) {
-  //   if (err) console.error(err);
-  //
-  //   console.log('connection successful with sql', rows, fields)
-  // })
-  //
-  // connection.end();
-  // var connection = mysql.createConnection({
-  //   host     : 'localhost',
-  //   user     : 'root',
-  //   password : 'lamba',
-  //   insecureAuth: true,
-  //   database : 'world',
-  //   port     : 3306
-  // });
-  //
-  // connection.connect();
-  //
-  // connection.query('SELECT 1 + 1 AS solution', function (err, rows, fields) {
-  //   if (err){
-  //     console.log("MySQL connection fail",err);
-  //     res.send(err);
-  //   }else{
-  //     console.log('connection successful with MySQL', rows, fields);
-  //     res.send({result: true, message: "Successfully connected with MySQL!"})
-  //   }
-  // })
-
-  // connection.end();
-
-  // var jdbcConfig = {
-  //     libpath: __dirname + '/../jar/mysql-connector-java-5.1.46.jar',
-  //     drivername: 'com.mysql.jdbc.Driver',
-  //     // url: 'jdbc:mysql://den1.mssql6.gear.host',
-  //     url: 'localhost',
-  //     user: 'root',
-  //     password: 'lamba@',
-  //     database: 'products'
-  // };
-  //
-  // var jdbcMetadata = new metadata(jdbcConfig);
-  //
-  // jdbcMetadata.metadata(function (err, metadata) {
-  //
-  //     console.log('Getting tables...');
-  //
-  //     jdbcMetadata.tables(null, function (err, tables) {
-  //         console.log(tables);
-  //
-  //         jdbcConn.close(function(err) {
-  //           console.log('Connection closed');
-  //         });
-  //     });
-  // });
-
   res.render('index')
 });
 
@@ -111,19 +41,6 @@ router.route('/fetchMySQLMetadata')
             }
             console.log("tables fetched.");
 
-            var options = {schema: 'sakila'};
-            console.log("forign keys fetching start...");
-            tables.map(t => {
-              options['table'] =  t['tableName'];
-              jdbcMetadata.importedKeys(options, function (err, importedKeys) {
-                if (err) {
-                  console.log("fk errrorr..");
-                }
-                  console.log("fk for ", t['tableName'] , "tables -> ", importedKeys);
-              });
-            })
-            console.log("forign keys fetched...");
-
             res.send({
               result: true,
               message: "Successfully fetched tables from MySQL!!!"
@@ -138,6 +55,56 @@ router.route('/fetchMySQLMetadata')
           });
       });
   })
+
+
+  router.route('/fetchTableKeys')
+    .post(function(req, res) {
+      var user = req.body.user,
+          password = req.body.password,
+          host = req.body.host,
+          port = req.body.port,
+          database = req.body.database,
+          tableName = req.body.tableName;
+
+        var jdbcConfig = {
+            libpath: './jar/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar',
+            drivername: 'com.mysql.jdbc.Driver',
+            url: 'jdbc:mysql://' + host + '/' + database,
+            user: user,
+            password: password,
+        };
+
+        var jdbcMetadata = new metadata(jdbcConfig);
+
+        jdbcMetadata.metadata(function (err, metadata) {
+            if (err){
+              console.log('Error metadata fetching...',err);
+              res.send(err);
+            }
+            var options = {schema: 'sakila'};
+            console.log("forign keys fetching start...");
+            options['table'] =  tableName;
+            jdbcMetadata.importedKeys(options, function (err, importedKeys) {
+              if (err) {
+                console.log("fk errrorr..");
+              }
+                console.log("fk for ", tableName , "tables -> ", importedKeys);
+
+                jdbcMetadata.close(function(err) {
+                  if (err){
+                    console.log('Error closing connection...');
+                    res.send(err);
+                  }
+                  console.log('Connection closed');
+                });
+                res.send({
+                  result: true,
+                  message: "Successfully fetched tables(" + tableName + ") forignKeys!!!"
+                , forignKeys: importedKeys});
+            });
+        });
+    })
+
 
 router.route('/connect2MongoDB')
   .post(function(req, res) {

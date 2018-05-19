@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 var querystring = require('querystring');
-import { Button , Modal} from 'react-bootstrap';
+import { Button , Modal, ButtonGroup, Label} from 'react-bootstrap';
 import '../css/App.css';
 
 class App extends Component {
@@ -28,7 +28,9 @@ class App extends Component {
       mongoConnectTry: false,
       mysqlConnectTry: false,
       show: false,
-      sqlTables: []
+      sqlTables: [],
+      forignKeys: [],
+      tableSelected: ""
     }
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -90,6 +92,37 @@ class App extends Component {
           messageFromMySQLServer: (response.data.message || response.data.code) ? (response.data.message || response.data.code) : "Error while connection with MySQL metadata.",
           sqlTables: response.data.tables,
           show: response.data.result,
+          mysqlConnectTry: false,
+          forignKeys: [],
+          tableSelected: ""
+        });
+      });
+  }
+  fetchTableKeys(t, tableName) {
+    debugger;
+    let _this = this;
+    _this.setState({
+      mysqlConnectTry: true,
+      tableSelected: tableName
+    });
+      axios.post('/fetchTableKeys',{
+          user: this.state.mysqldb.user,
+          password: this.state.mysqldb.password,
+          host: this.state.mysqldb.host,
+          port: this.state.mysqldb.port,
+          database: this.state.mysqldb.database,
+          tableName: tableName
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      ).then(function(response) {
+        console.log("forign keys return value ", response);
+        _this.setState({
+          // messageFromMySQLServer: (response.data.message || response.data.code) ? (response.data.message || response.data.code) : "Error while connection with MySQL metadata.",
+          forignKeys: response.data.forignKeys,
           mysqlConnectTry: false
         });
       });
@@ -145,14 +178,45 @@ class App extends Component {
             <Modal.Title>MySQL Metadata</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <h3>Tabels in schema : {this.state.mysqldb.database}</h3>
-            { this.state.sqlTables.length ?
-              this.state.sqlTables.map(table => {
-                return <div>{table["tableName"]}</div>
-              })
-              :
-              <div>No Tables found for this schema</div>
-            }
+          <div className="container">
+            <div className="row">
+              <div className="col-sm-3">
+                <h3>Tables in <p style={{display: "inline-block"}} className="font-weight-light">{this.state.mysqldb.database}</p> schema.</h3>
+                { this.state.sqlTables.length ?
+                  <ButtonGroup vertical block>
+                  {
+                    this.state.sqlTables.map(table => {
+                      return <Button onClick={(e) => this.fetchTableKeys(e, table["tableName"])}>{table["tableName"]}</Button>
+                    })
+                  }
+                  </ButtonGroup>
+                  :
+                    <div>No Tables found for this schema</div>
+                }
+              </div>
+              <div className="col-sm-3">
+                <h3>Forign Keys</h3>
+                { this.state.forignKeys.length ?
+                  this.state.forignKeys.map(fk => {
+                    return <div style={{margin: "30px"}}>
+                              <Label bsStyle="default">{fk['fkName']}</Label>{' '} of Table {' '}<Label bsStyle="primary">{fk['fktableName']}</Label>{' '}
+                              connected to{' '}
+                              <Label bsStyle="default">{fk['pkcolumnName']}</Label>{' '} of Table {' '}<Label bsStyle="primary">{fk['pktableName']}</Label>{' '}
+                            </div>
+                  })
+                  :
+                  <div>
+                    {
+                      this.state.tableSelected != "" ?
+                        <div>No FK found on {this.state.tableSelected}.</div>
+                      :
+                        <div>Select a table to get FK details</div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.handleClose}>Close</Button>
@@ -163,45 +227,45 @@ class App extends Component {
           <div className="row">
           <div className="col-md-6">
             <h2>MySQL</h2>
-            <h6>test : productssql | lamba@ | den1.mssql6.gear.host | 3306 | productssql</h6>
+            <h6>test : root | lamba@ | localhost | 3306 | sakila</h6>
             <form>
-              <div class="form-group">
+              <div className="form-group">
                 <label for="UserName">DB UserName</label>
-                <input type="text" class="form-control" id="mysql_user" placeholder="Enter UserName"
+                <input type="text" className="form-control" id="mysql_user" placeholder="Enter UserName"
                     value={this.state.mysqldb.user} onChange={evt => this.updateMySQLConnection(evt, "user")}/>
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <label for="Password">DB Password</label>
-                <input type="password" class="form-control" id="mysql_password" placeholder="Password"
+                <input type="password" className="form-control" id="mysql_password" placeholder="Password"
                     value={this.state.mysqldb.password} onChange={evt => this.updateMySQLConnection(evt, "password")}/>
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <label for="URL">Host</label>
-                <input type="text" class="form-control" id="mysql_url" placeholder="Enter Host"
+                <input type="text" className="form-control" id="mysql_url" placeholder="Enter Host"
                     value={this.state.mysqldb.host} onChange={evt => this.updateMySQLConnection(evt, "host")}/>
-                <small id="emailHelp" class="form-text text-muted">Provide MongoDB connection Host</small>
+                <small id="emailHelp" className="form-text text-muted">Provide MongoDB connection Host</small>
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <label for="PORT">PORT</label>
-                <input type="number" class="form-control" id="mysql_port" placeholder="Enter Port Number"
+                <input type="number" className="form-control" id="mysql_port" placeholder="Enter Port Number"
                     value={this.state.mysqldb.port} onChange={evt => this.updateMySQLConnection(evt, "port")}/>
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <label for="Collection">Database</label>
-                <input type="text" class="form-control" id="mysql_collection"  placeholder="Enter Database Name"
+                <input type="text" className="form-control" id="mysql_collection"  placeholder="Enter Database Name"
                     value={this.state.mysqldb.database} onChange={evt => this.updateMySQLConnection(evt, "database")}/>
               </div>
-              <div type="button" class="btn btn-primary" onClick={this.connectMySQL.bind(this)}>Connect</div>
-              <div type="button" class="btn btn-secondary" onClick={this.fetchMySQLMetadata.bind(this)}>Metadata</div>
+              <div type="button" className="btn btn-primary" onClick={this.connectMySQL.bind(this)}>Connect</div>
+              <div type="button" className="btn btn-secondary" onClick={this.fetchMySQLMetadata.bind(this)}>Metadata</div>
               {
                 this.state.mysqlConnectTry ?
                 <div className="loadersmall"></div>
                 :
                 <div>{
                   this.state.messageFromMySQLServer && this.state.result ?
-                   <h4 class="bg-success">{this.state.messageFromMySQLServer}</h4>
+                   <h4 className="bg-success">{this.state.messageFromMySQLServer}</h4>
                    :
-                   <h4 class="bg-danger">{this.state.messageFromMySQLServer}</h4>
+                   <h4 className="bg-danger">{this.state.messageFromMySQLServer}</h4>
                 }</div>
               }
             </form>
@@ -211,42 +275,42 @@ class App extends Component {
               <h6>test : sachin | lamba | ds253587.mlab.com | 53587 | ppsample</h6>
               <form>
                 {/* mongodb://<dbuser>:<dbpassword>@ds253587.mlab.com:53587/ppsample */}
-                <div class="form-group">
+                <div className="form-group">
                   <label for="UserName">DB UserName</label>
-                  <input type="text" class="form-control" id="mdb_user" placeholder="Enter UserName"
+                  <input type="text" className="form-control" id="mdb_user" placeholder="Enter UserName"
                       value={this.state.mongodb.user} onChange={evt => this.updateMongoConnection(evt, "user")}/>
                 </div>
-                <div class="form-group">
+                <div className="form-group">
                   <label for="Password">DB Password</label>
-                  <input type="password" class="form-control" id="mdb_password" placeholder="Password"
+                  <input type="password" className="form-control" id="mdb_password" placeholder="Password"
                       value={this.state.mongodb.password} onChange={evt => this.updateMongoConnection(evt, "password")}/>
                 </div>
-                <div class="form-group">
+                <div className="form-group">
                   <label for="URL">URL</label>
-                  <input type="text" class="form-control" id="mdb_url" placeholder="Enter URL"
+                  <input type="text" className="form-control" id="mdb_url" placeholder="Enter URL"
                       value={this.state.mongodb.url} onChange={evt => this.updateMongoConnection(evt, "url")}/>
-                  <small id="emailHelp" class="form-text text-muted">Provide MySQL connection URL</small>
+                  <small id="emailHelp" className="form-text text-muted">Provide MySQL connection URL</small>
                 </div>
-                <div class="form-group">
+                <div className="form-group">
                   <label for="PORT">PORT</label>
-                  <input type="number" class="form-control" id="mdb_port" placeholder="Enter Port Number"
+                  <input type="number" className="form-control" id="mdb_port" placeholder="Enter Port Number"
                       value={this.state.mongodb.port} onChange={evt => this.updateMongoConnection(evt, "port")}/>
                 </div>
-                <div class="form-group">
+                <div className="form-group">
                   <label for="Collection">Collection</label>
-                  <input type="text" class="form-control" id="mdb_collection"  placeholder="Enter Collection Name"
+                  <input type="text" className="form-control" id="mdb_collection"  placeholder="Enter Collection Name"
                       value={this.state.mongodb.collection} onChange={evt => this.updateMongoConnection(evt, "collection")}/>
                 </div>
-                <div type="button" class="btn btn-primary" onClick={this.connectMongo.bind(this)}>Connect</div>
+                <div type="button" className="btn btn-primary" onClick={this.connectMongo.bind(this)}>Connect</div>
                 {
                   this.state.mongoConnectTry ?
                   <div className="loadersmall"></div>
                   :
                   <div>{
                     this.state.messageFromMongoServer && this.state.result ?
-                     <h4 class="bg-success">{this.state.messageFromMongoServer}</h4>
+                     <h4 className="bg-success">{this.state.messageFromMongoServer}</h4>
                      :
-                     <h4 class="bg-danger">{this.state.messageFromMongoServer}</h4>
+                     <h4 className="bg-danger">{this.state.messageFromMongoServer}</h4>
                   }</div>
                 }
               </form>
