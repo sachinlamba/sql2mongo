@@ -3,7 +3,7 @@ var router = express.Router();
 var mongoose   = require('mongoose');
 var mysql = require('mysql');
 
-// var metadata = require('jdbc-metadata');
+var metadata = require('jdbc-metadata');
 
 router.get('/', function(req, res){
 
@@ -79,7 +79,7 @@ router.get('/', function(req, res){
   res.render('index')
 });
 
-router.route('/fetchMetadata')
+router.route('/fetchMySQLMetadata')
   .post(function(req, res) {
     var user = req.body.user,
         password = req.body.password,
@@ -94,31 +94,46 @@ router.route('/fetchMetadata')
           password: password,
           database: database
       };
+      var jdbcConfig = {
+          libpath: '../../jar/mysql-connector-java-5.1.46-bin.jar',
+          drivername: 'com.mysql.jdbc.Driver',
+          url: 'jdbc:mysql://localhost:3306/sakila',
+          user: 'root',
+          password: 'lamba@'
+      };
 
       var jdbcMetadata = new metadata(jdbcConfig);
 
       jdbcMetadata.metadata(function (err, metadata) {
           if (err){
-            console.log('Error metadata fetching...');
+            console.log('Error metadata fetching...',err);
             res.send(err);
           }
-          console.log('Getting tables...');
+          console.log('Getting tables...',metadata);
+          var options = {schema: 'test', types: ['TABLE', 'VIEW']};
 
-          jdbcMetadata.tables(null, function (err, tables) {
-            if (err){
-              console.log('Error tables fetching...');
-              res.send(err);
-            }
-              console.log("tables: ", tables);
-              res.send(tables);
-              jdbcConn.close(function(err) {
-                console.log('Error closing connection...');
-                if (err){
-                  res.send(err);
-                }
-                console.log('Connection closed');
-              });
+          console.log("ewrterte");
+          jdbcMetadata.primaryKeys({}, function (err, primaryKeys) {
+              console.log("jh  -> ",primaryKeys);
+              res.send(primaryKeys);
           });
+
+          // jdbcMetadata.tables(options, function (err, tables) {
+          //   console.log("Sdfdfsdfdfvsfs");
+          //   // if (err){
+          //   //   console.log('Error tables fetching...');
+          //   //   res.send(err);
+          //   // }
+          //     console.log("tables: ", tables);
+          //     res.send(tables);
+          //     jdbcConn.close(function(err) {
+          //       console.log('Error closing connection...');
+          //       if (err){
+          //         res.send(err);
+          //       }
+          //       console.log('Connection closed');
+          //     });
+          // });
       });
   })
 
