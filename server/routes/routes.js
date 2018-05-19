@@ -102,7 +102,7 @@ router.route('/fetchMySQLMetadata')
             res.send(err);
           }
           console.log('Getting tables...');
-          var options = {schema: 'test', types: ['TABLE', 'VIEW']};
+          // var options = {schema: 'test', types: ['TABLE', 'VIEW']};
 
           jdbcMetadata.tables({}, function (err, tables) {
             if (err){
@@ -110,6 +110,20 @@ router.route('/fetchMySQLMetadata')
               res.send(err);
             }
             console.log("tables fetched.");
+
+            var options = {schema: 'sakila'};
+            console.log("forign keys fetching start...");
+            tables.map(t => {
+              options['table'] =  t['tableName'];
+              jdbcMetadata.importedKeys(options, function (err, importedKeys) {
+                if (err) {
+                  console.log("fk errrorr..");
+                }
+                  console.log("fk for ", t['tableName'] , "tables -> ", importedKeys);
+              });
+            })
+            console.log("forign keys fetched...");
+
             res.send({
               result: true,
               message: "Successfully fetched tables from MySQL!!!"
