@@ -2,14 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose   = require('mongoose');
 var mysql = require('mysql');
-
 var metadata = require('jdbc-metadata');
-
-var JDBC = require('jdbc');
-var jinst = require('jdbc/lib/jinst');
-var Pool = require('jdbc/lib/pool');
-var path = require("path");
-
 
 router.get('/', function(req, res){
 
@@ -93,31 +86,12 @@ router.route('/fetchMySQLMetadata')
         port = req.body.port,
         database = req.body.database;
 
-        if (!jinst.isJvmCreated()) {
-          // Add all java options required by your project here.  You get one chance to
-          // setup the options before the first java call.
-          jinst.addOption("-Xrs");
-          // Add all jar files required by your project here.  You get one chance to
-          // setup the classpath before the first java call.
-          // jinst.setupClasspath(['./jars/mysql-connector-java-5.1.38-bin.jar']);
-          jinst.setupClasspath(['./jar/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar']);
-      }
-      console.log(". = %s", path.resolve("."));
-      console.log("__dirname = %s", path.resolve(__dirname));
-      // var jdbcConfig = {
-      //     libpath: __dirname + '/../jar/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46.jar',
-      //     drivername: 'com.mysql.jdbc.Driver',
-      //     url: host,
-      //     user: user,
-      //     password: password,
-      //     database: database
-      // };
       var jdbcConfig = {
           libpath: './jar/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar',
           drivername: 'com.mysql.jdbc.Driver',
-          url: 'jdbc:mysql://localhost:3306/sakila',
-          user: 'root',
-          password: 'lamba@'
+          url: 'jdbc:mysql://' + host + '/' + database,
+          user: user,
+          password: password,
       };
 
       var jdbcMetadata = new metadata(jdbcConfig);
@@ -127,30 +101,26 @@ router.route('/fetchMySQLMetadata')
             console.log('Error metadata fetching...',err);
             res.send(err);
           }
-          console.log('Getting tables...',metadata);
+          console.log('Getting tables...');
           var options = {schema: 'test', types: ['TABLE', 'VIEW']};
 
-          // console.log("ewrterte");
-          // jdbcMetadata.primaryKeys({}, function (err, primaryKeys) {
-          //     console.log("jh  -> ",primaryKeys);
-          //     res.send(primaryKeys);
-          // });
-
-          jdbcMetadata.tables(options, function (err, tables) {
-            console.log("Sdfdfsdfdfvsfs");
-            // if (err){
-            //   console.log('Error tables fetching...');
-            //   res.send(err);
-            // }
-              console.log("tables: ", tables);
-              res.send(tables);
-              // jdbcConn.close(function(err) {
-              //   console.log('Error closing connection...');
-              //   if (err){
-              //     res.send(err);
-              //   }
-              //   console.log('Connection closed');
-              // });
+          jdbcMetadata.tables({}, function (err, tables) {
+            if (err){
+              console.log('Error tables fetching...');
+              res.send(err);
+            }
+            console.log("tables fetched.");
+            res.send({
+              result: true,
+              message: "Successfully fetched tables from MySQL!!!"
+            , tables: tables});
+            jdbcMetadata.close(function(err) {
+              if (err){
+                console.log('Error closing connection...');
+                res.send(err);
+              }
+              console.log('Connection closed');
+            });
           });
       });
   })

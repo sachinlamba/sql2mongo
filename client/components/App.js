@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 var querystring = require('querystring');
+import { Button , Modal} from 'react-bootstrap';
 import '../css/App.css';
 
 class App extends Component {
@@ -19,14 +20,26 @@ class App extends Component {
         password : "lamba@",
         host : "localhost",
         port : 3306,
-        database : "products"
+        database : "sakila"
       },
       messageFromMongoServer : "",
       messageFromMySQLServer : "",
       connect: false,
       mongoConnectTry: false,
-      mysqlConnectTry: false
+      mysqlConnectTry: false,
+      show: false,
+      sqlTables: []
     }
+    this.handleShow = this.handleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+
+  }
+  handleClose() {
+    this.setState({ show: false });
+  }
+
+  handleShow() {
+    this.setState({ show: true });
   }
   connectMongo() {
     let _this = this;
@@ -75,7 +88,8 @@ class App extends Component {
         console.log("metadata return value ", response);
         _this.setState({
           messageFromMySQLServer: (response.data.message || response.data.code) ? (response.data.message || response.data.code) : "Error while connection with MySQL metadata.",
-          // connect: response.data.result,
+          sqlTables: response.data.tables,
+          show: response.data.result,
           mysqlConnectTry: false
         });
       });
@@ -125,11 +139,73 @@ class App extends Component {
 
     return (
       <div className="App">
-        {/* <header className="App-header">
-          <h1 className="App-title">Connect</h1>
-        </header> */}
+        <div>
+        <Modal show={this.state.show} onHide={this.handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>MySQL Metadata</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <h3>Tabels in schema : {this.state.mysqldb.database}</h3>
+            { this.state.sqlTables.length ?
+              this.state.sqlTables.map(table => {
+                return <div>{table["tableName"]}</div>
+              })
+              :
+              <div>No Tables found for this schema</div>
+            }
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.handleClose}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
         <div className="container">
           <div className="row">
+          <div className="col-md-6">
+            <h2>MySQL</h2>
+            <h6>test : productssql | lamba@ | den1.mssql6.gear.host | 3306 | productssql</h6>
+            <form>
+              <div class="form-group">
+                <label for="UserName">DB UserName</label>
+                <input type="text" class="form-control" id="mysql_user" placeholder="Enter UserName"
+                    value={this.state.mysqldb.user} onChange={evt => this.updateMySQLConnection(evt, "user")}/>
+              </div>
+              <div class="form-group">
+                <label for="Password">DB Password</label>
+                <input type="password" class="form-control" id="mysql_password" placeholder="Password"
+                    value={this.state.mysqldb.password} onChange={evt => this.updateMySQLConnection(evt, "password")}/>
+              </div>
+              <div class="form-group">
+                <label for="URL">Host</label>
+                <input type="text" class="form-control" id="mysql_url" placeholder="Enter Host"
+                    value={this.state.mysqldb.host} onChange={evt => this.updateMySQLConnection(evt, "host")}/>
+                <small id="emailHelp" class="form-text text-muted">Provide MongoDB connection Host</small>
+              </div>
+              <div class="form-group">
+                <label for="PORT">PORT</label>
+                <input type="number" class="form-control" id="mysql_port" placeholder="Enter Port Number"
+                    value={this.state.mysqldb.port} onChange={evt => this.updateMySQLConnection(evt, "port")}/>
+              </div>
+              <div class="form-group">
+                <label for="Collection">Database</label>
+                <input type="text" class="form-control" id="mysql_collection"  placeholder="Enter Database Name"
+                    value={this.state.mysqldb.database} onChange={evt => this.updateMySQLConnection(evt, "database")}/>
+              </div>
+              <div type="button" class="btn btn-primary" onClick={this.connectMySQL.bind(this)}>Connect</div>
+              <div type="button" class="btn btn-secondary" onClick={this.fetchMySQLMetadata.bind(this)}>Metadata</div>
+              {
+                this.state.mysqlConnectTry ?
+                <div className="loadersmall"></div>
+                :
+                <div>{
+                  this.state.messageFromMySQLServer && this.state.result ?
+                   <h4 class="bg-success">{this.state.messageFromMySQLServer}</h4>
+                   :
+                   <h4 class="bg-danger">{this.state.messageFromMySQLServer}</h4>
+                }</div>
+              }
+            </form>
+          </div>
             <div className="col-md-6">
               <h2>MongoDB</h2>
               <h6>test : sachin | lamba | ds253587.mlab.com | 53587 | ppsample</h6>
@@ -171,51 +247,6 @@ class App extends Component {
                      <h4 class="bg-success">{this.state.messageFromMongoServer}</h4>
                      :
                      <h4 class="bg-danger">{this.state.messageFromMongoServer}</h4>
-                  }</div>
-                }
-              </form>
-            </div>
-            <div className="col-md-6">
-              <h2>MySQL</h2>
-              <h6>test : productssql | lamba@ | den1.mssql6.gear.host | 3306 | productssql</h6>
-              <form>
-                <div class="form-group">
-                  <label for="UserName">DB UserName</label>
-                  <input type="text" class="form-control" id="mysql_user" placeholder="Enter UserName"
-                      value={this.state.mysqldb.user} onChange={evt => this.updateMySQLConnection(evt, "user")}/>
-                </div>
-                <div class="form-group">
-                  <label for="Password">DB Password</label>
-                  <input type="password" class="form-control" id="mysql_password" placeholder="Password"
-                      value={this.state.mysqldb.password} onChange={evt => this.updateMySQLConnection(evt, "password")}/>
-                </div>
-                <div class="form-group">
-                  <label for="URL">Host</label>
-                  <input type="text" class="form-control" id="mysql_url" placeholder="Enter Host"
-                      value={this.state.mysqldb.host} onChange={evt => this.updateMySQLConnection(evt, "host")}/>
-                  <small id="emailHelp" class="form-text text-muted">Provide MongoDB connection Host</small>
-                </div>
-                <div class="form-group">
-                  <label for="PORT">PORT</label>
-                  <input type="number" class="form-control" id="mysql_port" placeholder="Enter Port Number"
-                      value={this.state.mysqldb.port} onChange={evt => this.updateMySQLConnection(evt, "port")}/>
-                </div>
-                <div class="form-group">
-                  <label for="Collection">Database</label>
-                  <input type="text" class="form-control" id="mysql_collection"  placeholder="Enter Database Name"
-                      value={this.state.mysqldb.database} onChange={evt => this.updateMySQLConnection(evt, "database")}/>
-                </div>
-                <div type="button" class="btn btn-primary" onClick={this.connectMySQL.bind(this)}>Connect</div>
-                <div type="button" class="btn btn-secondary" onClick={this.fetchMySQLMetadata.bind(this)}>Metadata</div>
-                {
-                  this.state.mysqlConnectTry ?
-                  <div className="loadersmall"></div>
-                  :
-                  <div>{
-                    this.state.messageFromMySQLServer && this.state.result ?
-                     <h4 class="bg-success">{this.state.messageFromMySQLServer}</h4>
-                     :
-                     <h4 class="bg-danger">{this.state.messageFromMySQLServer}</h4>
                   }</div>
                 }
               </form>
