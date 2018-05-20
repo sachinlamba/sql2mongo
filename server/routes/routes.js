@@ -40,18 +40,36 @@ router.route('/fetchMySQLMetadata')
               res.send(err);
             }
             console.log("tables fetched.");
-
-            res.send({
-              result: true,
-              message: "Successfully fetched tables from MySQL!!!"
-            , tables: tables});
-            jdbcMetadata.close(function(err) {
-              if (err){
-                console.log('Error closing connection...');
-                res.send(err);
-              }
-              console.log('Connection closed');
-            });
+            var options = {schema: 'sakila'},
+                tableColumns = {};
+            console.log("columns fetching...");
+            tables.map((tdetails, index) => {
+                options['table'] =  tdetails['tableName'];
+                console.log("columns fetching for table - ", options['table'], tdetails['tableName']);
+                jdbcMetadata.columns(options, function (err, columns) {
+                  if (err) {
+                    console.log("columns errrorr..");
+                  }
+                    console.log("columns for ", tdetails['tableName'] , "tables -> ", index, tables.length);
+                    tableColumns[tdetails['tableName']] = columns;
+                  if(index == (tables.length - 1)){
+                      res.send({
+                        result: true,
+                        message: "Successfully fetched tables from MySQL!!!",
+                        tables: tables,
+                        tableColumns: tableColumns
+                      });
+                      console.log("columns fetched...",tableColumns);
+                      jdbcMetadata.close(function(err) {
+                        if (err){
+                          console.log('Error closing connection...');
+                          res.send(err);
+                        }
+                        console.log('Connection closed');
+                      });
+                  }
+                });
+            })
           });
       });
   })
@@ -89,18 +107,26 @@ router.route('/fetchMySQLMetadata')
                 console.log("fk errrorr..");
               }
                 console.log("fk for ", tableName , "tables -> ", importedKeys);
-
-                jdbcMetadata.close(function(err) {
-                  if (err){
-                    console.log('Error closing connection...');
-                    res.send(err);
+                console.log("columns fetching for table - ", options['table']);
+                jdbcMetadata.columns(options, function (err, columns) {
+                  if (err) {
+                    console.log("columns errrorr..");
                   }
-                  console.log('Connection closed');
+                  res.send({
+                    result: true,
+                    message: "Successfully fetched tables(" + tableName + ") forignKeys & columns!!!",
+                    forignKeys: importedKeys,
+                    singleTableColumns: columns
+                  });
+                  console.log("columns fetched...",columns);
+                  jdbcMetadata.close(function(err) {
+                    if (err){
+                      console.log('Error closing connection...');
+                      res.send(err);
+                    }
+                    console.log('Connection closed');
+                  });
                 });
-                res.send({
-                  result: true,
-                  message: "Successfully fetched tables(" + tableName + ") forignKeys!!!"
-                , forignKeys: importedKeys});
             });
         });
     })

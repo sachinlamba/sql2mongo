@@ -30,7 +30,8 @@ class App extends Component {
       show: false,
       sqlTables: [],
       forignKeys: [],
-      tableSelected: ""
+      tableSelected: "",
+      singleTableColumns: []
     }
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -94,6 +95,7 @@ class App extends Component {
           show: response.data.result,
           mysqlConnectTry: false,
           forignKeys: [],
+          singleTableColumns: [],
           tableSelected: ""
         });
       });
@@ -123,6 +125,7 @@ class App extends Component {
         _this.setState({
           // messageFromMySQLServer: (response.data.message || response.data.code) ? (response.data.message || response.data.code) : "Error while connection with MySQL metadata.",
           forignKeys: response.data.forignKeys,
+          singleTableColumns: response.data.singleTableColumns,
           mysqlConnectTry: false
         });
       });
@@ -195,25 +198,40 @@ class App extends Component {
                 }
               </div>
               <div className="col-sm-3">
-                <h3>Forign Keys</h3>
-                { this.state.forignKeys.length ?
-                  this.state.forignKeys.map(fk => {
-                    return <div style={{margin: "30px"}}>
-                              <Label bsStyle="default">{fk['fkName']}</Label>{' '} of Table {' '}<Label bsStyle="primary">{fk['fktableName']}</Label>{' '}
-                              connected to{' '}
-                              <Label bsStyle="default">{fk['pkcolumnName']}</Label>{' '} of Table {' '}<Label bsStyle="primary">{fk['pktableName']}</Label>{' '}
-                            </div>
-                  })
-                  :
-                  <div>
-                    {
-                      this.state.tableSelected != "" ?
-                        <div>No FK found on {this.state.tableSelected}.</div>
-                      :
-                        <div>Select a table to get FK details</div>
-                    }
-                  </div>
-                }
+                <div style={{display: 'flex', flexDirection: 'column'}}>
+                      <div style={{flex: '1'}}>
+                        <h3>Forign Keys</h3>
+                        { this.state.forignKeys.length ?
+                          this.state.forignKeys.map(fk => {
+                            return <div style={{margin: "30px"}}>
+                                      <Label bsStyle="default">{fk['fkName']}</Label>{' '} of Table {' '}<Label bsStyle="primary">{fk['fktableName']}</Label>{' '}
+                                      connected to{' '}
+                                      <Label bsStyle="default">{fk['pkcolumnName']}</Label>{' '} of Table {' '}<Label bsStyle="primary">{fk['pktableName']}</Label>{' '}
+                                    </div>
+                          })
+                          :
+                          <div>
+                            {
+                              this.state.tableSelected != "" ?
+                                <div>No FK found on {this.state.tableSelected}.</div>
+                              :
+                                <div>Select a table to get FK details</div>
+                            }
+                          </div>
+                        }
+                      </div>
+                      <div style={{flex: '1'}}>
+                        <h3>Columns in Table : {this.state.tableSelected}</h3>
+                        {
+                          (this.state.singleTableColumns && this.state.singleTableColumns.length) ?
+                            this.state.singleTableColumns.map(col => {
+                              return <div>{col['columnName']} {' <-> '} {col['typeName']}</div>
+                            })
+                            :
+                            <div>No Columns found...</div>
+                        }
+                      </div>
+                </div>
               </div>
             </div>
           </div>
