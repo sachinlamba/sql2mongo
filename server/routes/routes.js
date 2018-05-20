@@ -170,7 +170,7 @@ router.route('/connect2MySQL')
     // Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;
 
     connection.connect();
-    console.log(connection);
+    console.log("connection-> ", connection);
     connection.query('SELECT 1 + 1 AS solution', function (err, rows, fields) {
       if (err){
         console.log(err);

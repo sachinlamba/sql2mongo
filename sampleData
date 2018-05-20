@@ -1,0 +1,385 @@
+tables ->
+
+{
+  "tables": [
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "actor",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "address",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "category",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "city",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "country",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "customer",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "film",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "film_actor",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "film_category",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "film_text",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "inventory",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "language",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "payment",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "rental",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "staff",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "store",
+      "tableType": "TABLE",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "actor_info",
+      "tableType": "VIEW",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "customer_list",
+      "tableType": "VIEW",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "film_list",
+      "tableType": "VIEW",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "nicer_but_slower_film_list",
+      "tableType": "VIEW",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "sales_by_film_category",
+      "tableType": "VIEW",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "sales_by_store",
+      "tableType": "VIEW",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    },
+    {
+      "tableCat": "sakila",
+      "tableSchem": null,
+      "tableName": "staff_list",
+      "tableType": "VIEW",
+      "remarks": "",
+      "typeCat": null,
+      "typeSchem": null,
+      "typeName": null,
+      "selfReferencingColName": null,
+      "refGeneration": null
+    }
+  ]
+}
+
+MongoSphone file ->
+
+{
+	start: {
+		source: {
+			uri:  "jdbc:mysql://localhost:3306/sdemo?useSSL=false",
+			user: "root",
+			password: "password"
+		},
+		target: {
+			mode: "insert",
+			uri: "mongodb://localhost:27017/",
+			namespace: "sdemo.owners"
+		},
+		template: {
+			_id: "$ownerid",
+			name: "$name",
+			address : "$address",
+			pets : [ "@petsection" ]
+		},
+		query:{
+		   sql: 'SELECT * FROM owner'
+		}
+	},
+
+	petsection: {
+		template: {
+			petid: "$petid",
+			name: "$name",
+			species : "@speciessection"
+		},
+		query:{
+			sql: 'SELECT * FROM pet where owner = ?'
+		},
+		params: [ "ownerid" ]
+	},
+
+	speciessection: {
+		template: {
+			_value : "$species"
+		},
+		query: {
+			sql: 'SELECT * from species where speciesid = ?'
+		},
+		params : [ "species" ]
+	}
+}
+
+
+forign Keys  payment tables ->
+{
+  "forign_Keys": [
+    {
+      "pktableCat": "sakila",
+      "pktableSchem": null,
+      "pktableName": "customer",
+      "pkcolumnName": "customer_id",
+      "fktableCat": "sakila",
+      "fktableSchem": null,
+      "fktableName": "payment",
+      "fkcolumnName": "customer_id",
+      "keySeq": "1",
+      "updateRule": "0",
+      "deleteRule": "3",
+      "fkName": "fk_payment_customer",
+      "pkName": null,
+      "deferrability": "7"
+    },
+    {
+      "pktableCat": "sakila",
+      "pktableSchem": null,
+      "pktableName": "rental",
+      "pkcolumnName": "rental_id",
+      "fktableCat": "sakila",
+      "fktableSchem": null,
+      "fktableName": "payment",
+      "fkcolumnName": "rental_id",
+      "keySeq": "1",
+      "updateRule": "0",
+      "deleteRule": "2",
+      "fkName": "fk_payment_rental",
+      "pkName": null,
+      "deferrability": "7"
+    },
+    {
+      "pktableCat": "sakila",
+      "pktableSchem": null,
+      "pktableName": "staff",
+      "pkcolumnName": "staff_id",
+      "fktableCat": "sakila",
+      "fktableSchem": null,
+      "fktableName": "payment",
+      "fkcolumnName": "staff_id",
+      "keySeq": "1",
+      "updateRule": "0",
+      "deleteRule": "3",
+      "fkName": "fk_payment_staff",
+      "pkName": null,
+      "deferrability": "7"
+    }
+  ]
+}
